@@ -1,0 +1,44 @@
+version: '3'
+
+services:
+  postgres:
+    container_name: decommerce_postgres
+    build: 
+      context: ../../
+      dockerfile: docker/common/Dockerfile.postgres
+    ports:
+      - ${DATABASE_PORT}:5432
+    environment:
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_MULTIPLE_DATABASES: ${DATABASE_NAME},${TEST_DATABASE_NAME}
+
+  maildev:
+    container_name: decommerce_maildev
+    build:
+      context: ../../
+      dockerfile: docker/common/Dockerfile.maildev
+    ports:
+      - ${MAIL_CLIENT_PORT}:1080
+      - ${MAIL_PORT}:1025
+
+  redis:
+    container_name: decommerce_redis
+    image: redis:7-alpine
+    ports:
+      - 6379:6379
+    depends_on:
+      - postgres
+
+  api:
+    container_name: decommerce_api
+    build:
+      context: ../../
+      dockerfile: Dockerfile
+    ports:
+      - ${APP_PORT}:${APP_PORT}
+    depends_on:
+      - postgres
+      - redis
+      - maildev
+    command: bash -c "npm run migration:run && npm run seed:run && npm run start:prod"

@@ -1,0 +1,16 @@
+name: Master branch testing CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run e2e tests
+        run: docker-compose -f docker/ci/docker-compose.yaml --env-file env-example -p ci up --build --exit-code-from api

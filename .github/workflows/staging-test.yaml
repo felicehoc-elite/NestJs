@@ -1,0 +1,16 @@
+name: Staging branch testing CI
+
+on:
+  push:
+    branches: [staging]
+  pull_request:
+    branches: [staging]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run e2e tests
+        run: docker-compose -f docker/ci/docker-compose.yaml --env-file env-example -p ci up --build --exit-code-from api

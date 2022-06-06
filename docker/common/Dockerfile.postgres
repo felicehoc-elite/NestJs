@@ -1,0 +1,2 @@
+FROM postgres:14.2
+COPY docker/common/create-multiple-postgresql-databases.sh /docker-entrypoint-initdb.d/

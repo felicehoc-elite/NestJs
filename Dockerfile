@@ -10,5 +10,6 @@ RUN npm install
 
 COPY . .
 RUN rm -rf .env && cp env-example .env
-RUN npm run migration:run
 RUN npm run build
+
+CMD ["/bin/bash", "startup.dev.sh"]
